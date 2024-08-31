@@ -29,6 +29,7 @@ class User(Base):
     invited: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True)
     last_time_online: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), nullable=True)
     days_online: Mapped[int] = mapped_column(Integer, default=0, nullable=True)
+    subscribed: Mapped[int] = mapped_column(Integer, default=0)
     
 class Transaction(Base):
     __tablename__ = 'transactions'

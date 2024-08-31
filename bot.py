@@ -30,9 +30,9 @@ import kb_for_bot
 from database.requests import add_user, get_user_by_id, update_user_data, get_all_users, increase_mpx_balance
 
 
-API_TOKEN = 'API_TOKEN_FOR_BOT_FROM_ENV' 
+API_TOKEN = 'YOUR_BOT_API_TOKEN'
 
-# Создание бота и диспетчера
+
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
@@ -76,7 +76,25 @@ async def send_welcome(message: types.Message, command: CommandObject, bot: Bot)
         InlineKeyboardButton(text="XFI Bot", url="https://t.me/xficonsolebot?start=6955245170"),
         InlineKeyboardButton(text="CrossFi Channel", url="https://t.me/crossfichain")
         ]
-    await message.reply("Hello! Open Tetris and Play!\n\n/info - info board", reply_markup=InlineKeyboardBuilder().row(*butns, width=1).as_markup())
+    await message.reply(f"""<strong>
+Hey, @{message.from_user.username}! This is the CrossFi Bot.
+
+What can our bot do:
+
+• Create a CrossFi crypto wallet;
+• Mine MPX tokens in our game;
+• Develop a referral network and much more.
+
+How to play and earn? It's very simple:
+
+1. Create a wallet, play Tetris, and your balance will instantly start growing!
+2. Collect MPX and send them to your wallet.
+
+All the MPX you earn will be received on the testnet! How much you can earn and how long you will earn MPX depends only on you.
+
+After the emission is complete, the MPX conversion rate to mainnet will be set.</strong>""",
+ parse_mode='html',
+ reply_markup=InlineKeyboardBuilder().row(*butns, width=1).as_markup())
 
 
 
@@ -121,21 +139,25 @@ async def buy_mpx(cb: types.CallbackQuery, state: FSMContext):
 async def process_transfer_amount(message: types.Message, state: FSMContext):
     try:
         amount = round(float(message.text)/36, ndigits=5)
-        await state.update_data(amount=float(message.text))
-        await message.answer(f'<strong>You will get <code>{message.text} MPX</code> by <code>{amount}</code> XFI.'
-                             f'Please send XFI to <code>0x3f0f364124428BAff7A258a587eFC5ff6aed08AF</code> .\n\nThen press "Chech hash" button, to credit MPX\n\n'
-                             '❗️Enter strictly the same number in MPX, use only your metamask address in profile, otherwise the bot will not be able to recognize it!</strong>', 
-                             parse_mode='html',
-                             reply_markup=kb_for_bot.InlineKeyboardBuilder().row(
-                                    kb_for_bot.InlineKeyboardButton(text='Check hash', callback_data=f'check_hash'),
-                                    width=1
-                                 ).as_markup()
-                                 )
-        
+        if int(message.text) > 99:
+            await state.update_data(amount=float(message.text))
+            await message.answer(f'<strong>You will get <code>{message.text} MPX</code> by <code>{amount}</code> XFI.\n'
+                                f'Please send XFI to <code>0x3f0f364124428BAff7A258a587eFC5ff6aed08AF</code> .\n\nThen, <code>search transaction hash</code> on <a href="https://scan.xfi.ms/">SCAN.XFI.MS</a>'
+                                '\n\nPress "Chech hash" button, to credit MPX\n\n'
+                                '❗️Enter strictly the same number in MPX, use only your metamask address in profile, otherwise the bot will not be able to recognize it!</strong>', 
+                                parse_mode='html',
+                                reply_markup=kb_for_bot.InlineKeyboardBuilder().row(
+                                        kb_for_bot.InlineKeyboardButton(text='Check hash', callback_data=f'check_hash'),
+                                        width=1
+                                    ).as_markup()
+                                    )
+        else:
+            await message.answer('<strong>Invalid amount, minimum sum to convert is <code>100 MPX</code>. Please try later.</strong>', parse_mode='html')
+            await state.clear()
     except:
-        await message.answer('<strong>Invalid amount, minimum sum to convert is <code>500 MPX</code>. Please try later.</strong>', parse_mode='html')
+        await message.answer('<strong>Invalid amount. Please try again.</strong>', parse_mode='html')
         await state.clear()
-        return
+        
     
 
 class WaitForHash(StatesGroup):
@@ -145,7 +167,7 @@ class WaitForHash(StatesGroup):
 
 @dp.callback_query(F.data.startswith('check_hash'))
 async def check_user_hash(cb: types.CallbackQuery, state: FSMContext):
-    await cb.message.answer('<strong>Enter the hash that you received from transaction</strong>',
+    await cb.message.answer('<strong>Enter the hash that you received from transaction, you can search it on <a href="https://scan.xfi.ms/">SCAN.XFI.MS</a></strong>',
                             parse_mode='html')
     await state.set_state(WaitForHash.hash)
 
@@ -266,13 +288,19 @@ async def send_reflink(message: types.Message, bot: Bot):
 @dp.message(F.text == '🌐 XFI Site')
 async def send_info1(message: types.Message, bot: Bot):
     await add_user(tg_id=message.from_user.id, last_time_online=datetime.datetime.now())
-    await message.answer('<strong>Here CROSSFI Site:</strong> <a href="https://crossfi.org">TETRIS CHANNEL</a>', parse_mode='html')
+    await message.answer('<strong>Here CROSSFI Site:</strong> <a href="https://crossfi.org">CROSS FI</a>', parse_mode='html')
 
 
 @dp.message(F.text == '📣 Our Channel')
 async def send_info2(message: types.Message, bot: Bot):
     await add_user(tg_id=message.from_user.id, last_time_online=datetime.datetime.now())
-    await message.answer('<strong>Here Our Channel:</strong> <a href="https://t.me/TetrisBoss">TETRIS CHANNEL</a>', parse_mode='html')
+    u_status = await bot.get_chat_member(chat_id=-1002222915855, user_id=message.from_user.id)
+    if isinstance(u_status, types.ChatMemberMember) or isinstance(u_status, types.ChatMemberAdministrator) or isinstance(u_status, types.ChatMemberOwner):
+        user = await get_user_by_id(message.from_user.id)
+        await add_user(tg_id=message.from_user.id) if user.subscribed == 1 else  await add_user(tg_id=message.from_user.id, balance_mpx=user.balance_mpx+7,  subscribed=1)
+        await message.answer('<strong>Thanks for subscribe!</strong>', parse_mode='html')
+
+    await message.answer('<strong>Here Our Channel:</strong> <a href="https://t.me/crossfigod">СHANNEL</a> \n\nSubscribe and get 7 MPX!', parse_mode='html')
 
 @dp.message(F.text == '🏆 Top Players')
 async def send_players(message: types.Message, bot: Bot):
@@ -410,7 +438,7 @@ async def win_or_lose(cb: types.CallbackQuery):
     user = await get_user_by_id(cb.from_user.id)
     if data == 'win':
         try:
-            tx_hash, tx_block = await xfi_sender.transfer_to(amount=0.36, recipient_address=user.metamask_wallet_address)
+            tx_hash, tx_block = await xfi_sender.transfer_to(amount=36, recipient_address=user.metamask_wallet_address)
         except:
             await cb.message.answer("<strong>Error occurred while transferring funds to your wallet!</strong>", parse_mode='html')
             return
@@ -440,7 +468,5 @@ async def main():
     await dp.start_polling(bot, skip_updates=True)
 
 
-
-# Запуск бота
 if __name__ == '__main__':
     asyncio.run(main())
