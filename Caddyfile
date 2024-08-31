@@ -1,0 +1,9 @@
+www.crossfigod.io {
+    redir https://crossfigod.io{uri}
+}
+
+
+
+crossfigod.io {
+    reverse_proxy 127.0.0.1:8000
+}
