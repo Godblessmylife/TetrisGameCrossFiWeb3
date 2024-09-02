@@ -11,6 +11,7 @@ import json
 
 
 app: Quart = Quart(__name__)
+# cors = CORS(app, resources={r"/*": {"origins": "https://crossfigod.io"}})
 
 
 async def check_if_user():
@@ -46,8 +47,15 @@ async def main(file) -> str:
 
 
 
+
+
+
+
+
+
 @app.route('/js/<string:file>', methods=['GET'])
 async def get_js(file):
+    # print(file)
     return await send_file(f'js/{file}', mimetype='text/javascript')
 
 
@@ -70,6 +78,9 @@ async def get_fav():
 
 @app.route('/manifest.json', methods=['GET'])
 async def send_manifest() -> str:
+    # if await check_if_user():
+    #     return json.dumps({'success': False, 'error': "you doesn't have permission"})
+    
     return await send_file(f'manifest.json', mimetype='text/json')
 
 
@@ -80,16 +91,20 @@ async def get_data_from_game() -> str:
             return json.dumps({'success': False, 'error': "you doesn't have permission"})
     except:
         pass
+    # print(request.referrer)
+    # print(request.data)
+    # print()
 
     data = await request.get_json()
     id = data['from_tg']['user']['id']
+    # print(data)
 
     if data['score'] != 0:
-        await increase_mpx_balance(user_id=id, amount=data['score'])
         user = await get_user_by_id(tg_id=id)
+        await increase_mpx_balance(user_id=id, amount=data['score'] * 2 if user.boost_expires_at else data['score']) 
         await bot.send_message(chat_id=id, text=f"Congratulations, <strong>{data['from_tg']['user']['first_name']}</strong>!\n"
-                               f"You earned <code>{data['score']}</code> <strong>MPX</strong> points!\n\n"
-                               f"Now, your balance is {user.balance_mpx} <strong>MPX</strong>", 
+                               f"""You earned <code>{f"2x {data['score'] * 2}" if user.boost_expires_at else data['score']}</code> <strong>MPX</strong> points!\n\n"""
+                               f"Now, your balance is <strong>{user.balance_mpx + data['score'] * 2 if user.boost_expires_at else data['score']} MPX</strong>", 
                                parse_mode='html')
  
     return json.dumps({'success': True})
@@ -103,11 +118,11 @@ async def get_data_from_metaMask() -> str:
             return json.dumps({'success': False, 'error': "you doesn't have permission"})
     except:
         pass
-
+    # print(request.referrer)
     data = await request.get_json()
     try: id = data['from_tg']['user']['id']
     except: return json.dumps({'success': False, 'error': "you aren't using telegram"})
-
+    # print(data)
     await update_user_data(tg_id=id, metamask_wallet_address=data['MetaMaskWallet'])
 
     await bot.send_message(chat_id=id, text=f"New connection, your wallet is {data['MetaMaskWallet']}")
@@ -119,18 +134,22 @@ async def get_data_from_metaMask() -> str:
 async def get_data_from_tonconnect() -> str:
     try:
         if await check_if_user():
-
+            # print(request.referrer)
             return json.dumps({'success': False, 'error': "you doesn't have permission"})
     except:
         pass
-
+    # print(request.data)
+    # print(request.referrer)
 
     data = await request.get_json()
     try: id = data['from_tg']['user']['id']
     except: return json.dumps({'success': False, 'error': "you aren't using telegram"})
-
+    # print(data)
     uf_addres = await get_user_friendly_address(address=data['ton_connect_address'])
     await update_user_data(tg_id=id, ton_wallet_address=uf_addres)
+    # print(await get_user_friendly_address(data['ton_connet_address']))
+
+    # await bot.send_message(chat_id=id, text=f"New connection, your wallet is {data['MetaMaskWallet']}")
 
     return json.dumps({'success': True})
 

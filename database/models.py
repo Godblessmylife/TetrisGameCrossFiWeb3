@@ -24,12 +24,13 @@ class User(Base):
     first_name: Mapped[int] = mapped_column(String)
     username: Mapped[str] = mapped_column(String)
     balance_mpx: Mapped[int] = mapped_column(BigInteger, default=0)
-    ton_wallet_address: Mapped[str] = mapped_column(String, default='', nullable=True)
-    metamask_wallet_address: Mapped[str] = mapped_column(String, default='', nullable=True)
+    ton_wallet_address: Mapped[str] = mapped_column(String, default='')
+    metamask_wallet_address: Mapped[str] = mapped_column(String, default='')
     invited: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True)
-    last_time_online: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), nullable=True)
+    last_time_online: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
     days_online: Mapped[int] = mapped_column(Integer, default=0, nullable=True)
     subscribed: Mapped[int] = mapped_column(Integer, default=0)
+    boost_expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     
 class Transaction(Base):
     __tablename__ = 'transactions'

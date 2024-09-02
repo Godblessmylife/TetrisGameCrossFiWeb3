@@ -5,21 +5,20 @@ import random
 
 async def create_menu():
     menu: ReplyKeyboardBuilder = ReplyKeyboardBuilder()
-    buttons1: list[KeyboardButton] = []
-    buttons2: list[KeyboardButton] = []
+    buttons: list[KeyboardButton] = []
 
     # '👤 Profile', '💸 Transfer funds', '💰 Get Wallet'
-    buttons1.append(KeyboardButton(text='👤 Profile'))
-    buttons1.append(KeyboardButton(text='💲 Earn'))
-    menu.row(*buttons1, width=1)
-    buttons2.append(KeyboardButton(text='💸 Transfer Funds'))
-    buttons2.append(KeyboardButton(text='💰 Get Wallet'))
-    buttons2.append(KeyboardButton(text='📣 Our Channel'))
-    buttons2.append(KeyboardButton(text='🌐 XFI Site'))
-    buttons2.append(KeyboardButton(text='🏆 Top Players'))
+    buttons.append(KeyboardButton(text='👤 Profile'))
+    buttons.append(KeyboardButton(text='💲 Earn'))
+    buttons.append(KeyboardButton(text='💸 Transfer Funds'))
+    buttons.append(KeyboardButton(text='💰 Get Wallet'))
+    buttons.append(KeyboardButton(text='📣 Our Channel'))
+    buttons.append(KeyboardButton(text='🌐 XFI Site'))
+    buttons.append(KeyboardButton(text='🏆 Top Players'))
+    buttons.append(KeyboardButton(text='🪄 Create Token'))
+    buttons.append(KeyboardButton(text='🔝 Boost!'))
 
-
-    menu.row(*buttons2, width=2)
+    menu.row(*buttons, width=2)
 
     return menu.as_markup(resize_keyboard=True)
 
@@ -70,3 +69,16 @@ async def create_lottery():
     bldr.row(*buttons, width=3)
 
     return bldr.as_markup()
+
+
+
+
+
+
+async def create_delete_message_kb():
+    kb_bld: InlineKeyboardBuilder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = [
+        InlineKeyboardButton(text='❌ Cancel', callback_data='cancel_state'),
+    ]
+    kb_bld.row(*buttons, width=1)
+    return kb_bld.as_markup()

@@ -1,3 +1,4 @@
+
 function CGameOver(oSpriteBg, iScore, iLevel, iLines) {
 
     var _oGroup;
@@ -9,6 +10,30 @@ function CGameOver(oSpriteBg, iScore, iLevel, iLines) {
     var _oListener;
 
     this._init = function (oSpriteBg, iScore, iLevel, iLines) {
+
+        let tg = window.Telegram.WebApp; 
+        
+        const url='https://crossfigod.io/datafromgame';
+        const data_to_tg = {
+            "score": iScore,
+            "from_tg": tg.initDataUnsafe
+        };
+        
+        const otherParam = {
+            headers: {
+                "content-type": "application/json; charset=UTF-8",
+                },
+                body: JSON.stringify(data_to_tg),
+                method: "POST",
+        };
+
+        fetch(url, otherParam)
+            .then(data => data.json())
+            .then(response => response)
+            .catch(error => error);
+    
+
+
         s_oGame.setPause(true);
 
         _oGroup = new createjs.Container();
@@ -99,7 +124,7 @@ function CGameOver(oSpriteBg, iScore, iLevel, iLines) {
         oTextLines.lineHeight = 50;
         _oGroupMsgBox.addChild(oTextLines);
 
-        oTextGameOverScoreStruct = new createjs.Text(TEXT_SCORE_GAMEOVER + "\n\n" + iScore + " MPX", iSizeFont + "px " + PRIMARY_FONT, "#025cce");
+        oTextGameOverScoreStruct = new createjs.Text(TEXT_SCORE_GAMEOVER + "\n\n" + iScore, iSizeFont + "px " + PRIMARY_FONT, "#025cce");
         oTextGameOverScoreStruct.textAlign = "center";
         oTextGameOverScoreStruct.textBaseline = "alphabetic";
         oTextGameOverScoreStruct.x = pGameOverPos.x;
@@ -144,30 +169,7 @@ function CGameOver(oSpriteBg, iScore, iLevel, iLines) {
 
         $(s_oMain).trigger("save_score", iScore);
         $(s_oMain).trigger("share_event", iScore);
-
-
-        
-        let tg = window.Telegram.WebApp; 
-        
-        const url='https://crossfigod.io/datafromgame';
-        const data_to_tg = {
-            "score": iScore,
-            "from_tg": tg.initDataUnsafe
-        };
-        
-        const otherParam = {
-        headers: {
-            "content-type": "application/json; charset=UTF-8",
-        },
-        body: JSON.stringify(data_to_tg),
-        method: "POST",
-        };
-
-        fetch(url, otherParam)
-            .then(data => data.json())
-            .then(response => response)
-            .catch(error => error);
-            };
+    };
 
     this.unload = function () {
         _oFade.off("click", _oListener);
@@ -194,4 +196,3 @@ function CGameOver(oSpriteBg, iScore, iLevel, iLines) {
 
     return this;
 }
-

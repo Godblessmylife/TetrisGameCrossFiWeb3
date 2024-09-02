@@ -13,8 +13,8 @@ function CController() {
     this._init = function () {
         _pStartPosControlRight = {x: CANVAS_WIDTH * 0.5 - 190, y: CANVAS_HEIGHT - 80};
         _pStartPosControlLeft = {x: CANVAS_WIDTH * 0.5 - 380, y: CANVAS_HEIGHT - 80};
-        _pStartPosControlUp = {x: CANVAS_WIDTH * 0.5 + 380, y: CANVAS_HEIGHT - 80};
-        _pStartPosControlDown = {x: CANVAS_WIDTH * 0.5 + 40, y: CANVAS_HEIGHT - 80};
+        _pStartPosControlUp = {x: CANVAS_WIDTH * 0.5 + 135, y: CANVAS_HEIGHT - 80};
+        _pStartPosControlDown = {x: CANVAS_WIDTH * 0.5 + 260, y: CANVAS_HEIGHT - 80};
 
         var oSpriteArrow = s_oSpriteLibrary.getSprite("arrow");
         var oSpriteRotation=s_oSpriteLibrary.getSprite("but_rotation");
