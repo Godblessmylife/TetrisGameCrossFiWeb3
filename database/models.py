@@ -24,6 +24,7 @@ class User(Base):
     first_name: Mapped[int] = mapped_column(String)
     username: Mapped[str] = mapped_column(String)
     balance_mpx: Mapped[int] = mapped_column(BigInteger, default=0)
+    balance_snake: Mapped[int] = mapped_column(BigInteger, default=0)
     ton_wallet_address: Mapped[str] = mapped_column(String, default='')
     metamask_wallet_address: Mapped[str] = mapped_column(String, default='')
     invited: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True)

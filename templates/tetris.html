@@ -144,6 +144,7 @@
         <div class="content" id="content">
             <button id="ton-connect" class="button">Connect Wallets</button>
             <button id="startGameButton" class="button">Start Game</button>
+            <button id="snakeGameButton" class="button">Play Snake</button>
             <!-- <button id="connectMetaMaskButton" class="button">Connect MetaMask</button> -->
         </div>
 
@@ -209,6 +210,14 @@
                     window.location.href = '/game.html';
                 } catch (error) {
                     console.error("Error navigating to start game URL:", error);
+                }
+            });
+
+            document.getElementById('snakeGameButton').addEventListener('click', function () {
+                try {
+                    window.location.href = '/snake.html';
+                } catch (error) {
+                    console.error("Error navigating to snake game URL:", error);
                 }
             });
 
