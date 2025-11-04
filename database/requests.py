@@ -105,6 +105,16 @@ async def increase_mpx_balance(user_id: int, amount: int):
         await session.commit()
 
 
+async def increase_snake_balance(user_id: int, amount: int):
+    """
+    Increase snake token balance
+    """
+    logging.info(f"increase_snake_balance {user_id} -> {amount}")
+    async with async_session() as session:
+        await session.execute(update(User).where(User.tg_id == user_id).values(balance_snake=User.balance_snake + amount))
+        await session.commit()
+
+
 # import asyncio
 # import datetime
 

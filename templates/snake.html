@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake - CrossFi</title>
+    <script src="/js/snake.js"></script>
+    <script src="/js/solana_wallet.js"></script>
+    <style>
+        html, body {margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial, sans-serif;display:flex;justify-content:center;align-items:center;}
+        .ui{position:absolute;top:0;left:0;width:100%;display:flex;gap:10px;justify-content:center;padding:10px;}
+        canvas{background:#111;}
+        .button{background:transparent;color:white;padding:8px 16px;border:2px solid #007BFF;border-radius:5px;cursor:pointer;}
+    </style>
+</head>
+<body>
+    <div class="ui">
+        <button class="button" onclick="startSnake()">Start Snake</button>
+        <button class="button" onclick="connectWalletPhantom()">Connect Phantom</button>
+        <button class="button" onclick="connectWalletSolflare()">Connect Solflare</button>
+        <button class="button" onclick="window.location.href='/tetris.html'">Play Tetris</button>
+        <span id="walletAddress"></span>
+        <span id="snakeScore"></span>
+    </div>
+    <canvas id="snakeCanvas"></canvas>
+</body>
+</html>

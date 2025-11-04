@@ -3,7 +3,7 @@ from quart import Quart,  render_template, websocket, request, send_file
 import aiohttp
 
 from bot import bot
-from database.requests import update_user_data, increase_mpx_balance, get_user_by_id
+from database.requests import update_user_data, increase_mpx_balance, increase_snake_balance, get_user_by_id
 
 import logging as lg
 
@@ -107,6 +107,36 @@ async def get_data_from_game() -> str:
                                f"Now, your balance is <strong>{user.balance_mpx + data['score'] * 2 if user.boost_expires_at else data['score']} MPX</strong>", 
                                parse_mode='html')
  
+    return json.dumps({'success': True})
+
+
+@app.route('/datasnake', methods=['POST'])
+async def get_data_from_snake() -> str:
+    try:
+        if await check_if_user():
+            return json.dumps({'success': False, 'error': "you doesn't have permission"})
+    except:
+        pass
+
+    data = await request.get_json()
+    try:
+        user_id = data['from_tg']['user']['id']
+    except:
+        return json.dumps({'success': False, 'error': "you aren't using telegram"})
+
+    if data['score'] != 0:
+        user = await get_user_by_id(tg_id=user_id)
+        await increase_snake_balance(user_id=user_id, amount=data['score'])
+        await bot.send_message(
+            chat_id=user_id,
+            text=(
+                f"Congratulations, <strong>{data['from_tg']['user']['first_name']}</strong>!\n"
+                f"You earned <code>{data['score']}</code> <strong>SNAKE</strong> tokens!\n\n"
+                f"Now, your balance is <strong>{user.balance_snake + data['score']} SNAKE</strong>"
+            ),
+            parse_mode='html'
+        )
+
     return json.dumps({'success': True})
 
 
