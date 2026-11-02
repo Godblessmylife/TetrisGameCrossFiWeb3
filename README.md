@@ -125,4 +125,4 @@ Use a dedicated testnet wallet. Never commit a private key or a bot token.
 
 ## Credits
 
-Made for the CrossFi hackathon. Authors on Telegram: @web3elchapo, @PBAsync.
+Made for the CrossFi hackathon. Authors on Telegram: @web3elchapo
